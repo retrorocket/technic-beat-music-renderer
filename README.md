@@ -1,7 +1,7 @@
 # Technictix / Technic Beat MUS + MRK + VH/VB → WAV Renderer
 
 - Technictix / Technic Beat の楽曲データから、伴奏（MUS）と演奏音（MRK + VAB）を合成して楽曲をWAVへ復元するスクリプトです。
-- 実装にあたって、 https://gist.github.com/Sakimotor/623c1fcd8470c208347300382b32cda3 を参考にしました。
+- 実装にあたって、 <https://gist.github.com/Sakimotor/623c1fcd8470c208347300382b32cda3> を参考にしました。
 - **このスクリプトは個人の技術的な興味から作成されたものです。** 基本的にすべての曲はサウンドトラックに収録されているため、よっぽどの事情がない限りはサウンドトラックで十分のはずです。個人で楽しんだりゲームを研究する用途以外で使わないでください。
 - 実装は `GPT-5.6 Sol` に手伝ってもらいました。ありがとうございます。
 
@@ -12,7 +12,7 @@
 基本的に1曲につき以下の4ファイルを使用します。
 
 | ファイル | 用途 |
-|---|---|
+| --- | --- |
 | `.mus` | 伴奏音声 |
 | `.mrk` | 演奏イベント、タイミング、ノート、Velocity、Pan、Key-Off情報 |
 | `.vh` | Sony VABヘッダ。Tone、Pitch、Volume、ADSR、VAG割り当てなど |
@@ -177,7 +177,7 @@ MRKは **1レコード32 bytes** として処理します。
 主に使用するフィールドは以下です。
 
 | Offset | 内容 |
-|---:|---|
+| ---: | --- |
 | `+0x00` | Event tick |
 | `+0x10` | **Key-Offまでのtick数（uint16 LE）** |
 | `+0x18` | Tone番号 |
@@ -696,4 +696,4 @@ python rebuild_technic_beat.py ... \
 - Profile自動判別は、試作時に使用した `Days Dreamer (a00)` と `MARCHEN MAZE (e15)` の特徴をもとにしたヒューリスティックです。
 - `tone_shift_semitones()` の解釈は、検証済みレンダラーから引き継いだ経験則です。
 - MUSの格納形式については、現在確認済みのTechnic Beat / Technictixデータ構造を前提としています。
-- リバーブ処理は実機の演奏を完全に再現するのが難しいです。 
+- リバーブ処理は実機の演奏を完全に再現するのが難しいです。
