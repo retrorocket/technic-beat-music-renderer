@@ -118,8 +118,6 @@ interleave = 0x17700
 
 を使用して左右チャンネルを組み直し、Stereo PCMへ変換します。
 
-詳細は https://hcs64.com/mboard/forum.php?showthread=60921&showpage=2 を参照してください。
-
 ---
 
 # VAB（VH/VB）の処理
