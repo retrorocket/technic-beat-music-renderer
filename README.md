@@ -20,10 +20,12 @@
 
 - `.mrk`はアンダースコア付きのファイル `[a-f][0-9][0-9]_.mrk` を使用してください。譜面作成前の元データとして用意されたと思われるファイルのため、seqなしで演奏できます。
   - テクニクティクスの内部動作では、サウンドプレーヤー及びダンスエディットでアンダースコア付きのファイルが再生されるようになっています。
-  - アンダースコア付きのファイルはテクニクティクスか、アーケード版テクニクビートにしか残っていません。ただし、PS2版にはPS2版で追加された楽曲のデータが残っています。
-  - ゲーム中に使用されている `.mrk` と `.seq` の組み合わせからの復元は現状できません。私がどうにかするには難しすぎるからです。
+  - アンダースコア付きのファイルはテクニクティクスか、アーケード版テクニクビートにしか残っていません。ただし、PS2版にはPS2版で追加された楽曲のデータが残っています。（LOVE MAHJONGを除く）
+  - ゲームプレイ時に使用される `.mrk` と `.seq` の組み合わせからの復元は、正しい演奏順序がわからない限り不可能です。このゲームではマーカーの演奏順はプレイヤーに委ねられているため、正しい演奏演奏タイミングは存在していても、正しい演奏順序というものがゲーム中に存在しないためです。
 - `.seq` はオプションで指定できますが、このスクリプトでは使用していません。指定した場合はファイルの存在とサイズだけを確認します。
-- `.mex`はパズルモード用のファイルなので、楽曲復元の際に使うことはないです。
+- `.mex` はパズルモード用のファイルなので、楽曲復元の際に使うことはないです。
+
+ [PS2 テクニクビートの楽曲の管理情報](./musiclist.md)も合わせて参照してください。私が読んでほしいのはむしろそちらのドキュメントのほうです。
 
 ---
 
@@ -43,34 +45,33 @@ pip3 install numpy
 ## 基本的な使い方
 
 ```bash
-python3 rebuild_technic_beat_v5.py \
+python3 technic_beat_music_renderer.py \
     --mus e15.mus \
     --mrk e15_.mrk \
     --vh e15.vh \
     --vb e15.vb \
     --out e15.wav
-    --profile {tix, namco, auto}
+    --profile {tix, namco}
 ```
 
-ティクス曲かナムコ曲（＆PS2新規曲）かで動作が変わるため、音がどんどんずれていくときは `--profile`で楽曲の種類を指定してください。  
-デフォルト値は`auto`で、自動判定するようになっていますが、Mao's Travel (a08)等、判定に失敗する曲があります。
+テクニクティクスの収録曲の場合  `--profile tix` を、テクニクビートの収録曲の場合 `--profile beat`を指定してください。ゲーム中でも明確に処理が分かれています。
 
 楽器演奏のみのWAVも同時に出力する場合:
 
 ```bash
-python3 rebuild_technic_beat_v5.py \
+python3 technic_beat_music_renderer.py \
     --mus e15.mus \
     --mrk e15_.mrk \
     --vh e15.vh \
     --vb e15.vb \
     --out e15.wav \
+    --profile {tix, namco} \
     --instruments e15_instruments.wav
 ```
 
 デフォルト設定は、
 
 ```text
-Profile         : auto
 Gate            : adsr
 Pan             : linear
 Note offset     : -1
@@ -193,29 +194,45 @@ MRKは **1レコード32 bytes** として処理します。
 
 # タイミング
 
-現在、2種類の動作プロファイルを持っています。
+ゲーム内では楽曲ごとのフラグによって処理が分岐しているため、レンダラーでは2種類の動作プロファイルを明示的に指定します。
 
-## `MÄRCHEN MAZE e15`
+## `beat`
 
-ナムコ曲で使用されている（と思われる）設定値
+テクニクビート側のタイミング設定です。
 
 ```text
 MRK tick clock : 60000 / 1001 Hz ≒ 59.94005994 Hz
-MRK → MUS lead : 2.9701 sec
+MRK → MUS lead : 178 ticks ≒ 2.969633 sec
 Gate           : +0x10 Key-Off + ADSR Release
 ```
 
-## `Days Dreamer a00`
+leadは次の式で計算します。
 
-ティクス曲で使用されている（と思われる）設定値
+```text
+lead_sec = 178 / (60000 / 1001)
+         ≒ 2.969633333 sec
+```
+
+## `tix`
+
+テクニクティクス側のタイミング設定です。
 
 ```text
 MRK tick clock : 60 Hz
-MRK → MUS lead : 3.000 sec
+MRK → MUS lead : 180 ticks = 3.000000 sec
 Gate           : +0x10 Key-Off + ADSR Release
 ```
 
-演奏開始時刻は、
+leadは次の式で計算します。
+
+```text
+lead_sec = 180 / 60
+         = 3.000000 sec
+```
+
+## 演奏開始時刻
+
+各MRKイベントの演奏開始時刻は、
 
 ```text
 start_sec = lead_sec + MRK_tick / tick_hz
@@ -223,42 +240,16 @@ start_sec = lead_sec + MRK_tick / tick_hz
 
 で計算します。
 
----
-
-# Profile自動判別
-
-デフォルトは
-
-```bash
---profile auto
-```
-
-です。
-
-現在の自動判別では、VABが
+したがって、各プロファイルでは次の計算になります。
 
 ```text
-Programs <= 2
-Tones    <= 32
-VAGs     <= 32
-```
+beat:
+start_sec = 178 / (60000 / 1001)
+          + MRK_tick / (60000 / 1001)
 
-の小規模Bankである場合、`tix` profileを選択します。
-
-それ以外は原則として `namco` profileを使用します。
-
-MRK終了マーカーとMUS長の一致度も参考情報として計算しますが、durationだけでprofileを決定しません。MUS末尾に無音paddingを持つ曲があるためです。
-
-強制指定も可能です。
-
-```bash
---profile namco
-```
-
-または
-
-```bash
---profile tix
+tix:
+start_sec = 180 / 60
+          + MRK_tick / 60
 ```
 
 ---
@@ -572,7 +563,7 @@ CSVには、tick、section、Tone、Note、Velocity、Pan、Key-Off tickなど�
 --tick-hz 59.94005994 --lead-sec 2.9701
 ```
 
-ただし現在の実装ではprofile選択後にprofile既定値が適用されるため、`namco` / `tix` の通常利用ではprofile値が使用されます。
+ただし現在の実装ではprofile選択後にprofile既定値が適用されるため、`beat` / `tix` の通常利用ではprofile値が使用されます。
 
 ## Pitch補正
 
@@ -693,7 +684,6 @@ python rebuild_technic_beat.py ... \
 - Key-Off以前の音量は実機録音に対して既にキャリブレーション済みのため、Attack / Decay / Sustainは意図的にシミュレートせず、Key-Off後のADSR2 Releaseのみを再現しています。
 - ADSRはKey-Off後のReleaseのみを再現します。
 - VAGのloop start情報はADPCM解析時に取得しますが、現在のレンダリングではループ再生を実装していません。
-- Profile自動判別は、試作時に使用した `Days Dreamer (a00)` と `MARCHEN MAZE (e15)` の特徴をもとにしたヒューリスティックです。
 - `tone_shift_semitones()` の解釈は、検証済みレンダラーから引き継いだ経験則です。
 - MUSの格納形式については、現在確認済みのTechnic Beat / Technictixデータ構造を前提としています。
 - リバーブ処理は実機の演奏を完全に再現するのが難しいです。

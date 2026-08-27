@@ -1,23 +1,21 @@
 #!/usr/bin/env python3
 """
-Technic Beat / Technictix MUS + MRK + VH/VB -> WAV renderer
+Technictix / Technic Beat MUS + MRK + VH/VB -> WAV renderer
 
-See: https://gist.github.com/Sakimotor/623c1fcd8470c208347300382b32cda3
-
-Default profile selection is automatic.
+Profile selection is explicit because the game chooses it from a per-song flag.
 Profile names are based on the data/timing family rather than a single song:
-  namco = former 'e15 MARCHEN MAZE' profile
-  tix   = former 'a00 Days Dreamer' profile
+  beat
+  tix
 
 The known profiles are:
-  namco profile:  # formerly called 'e15'
+  beat profile:
     MRK tick clock : 60000/1001 Hz
-    MRK -> MUS lead: 2.9701 s
+    MRK -> MUS lead: 178 ticks / (60000/1001 Hz) = 2.969633333... s
     Gate           : MRK +0x10 Key-Off + VAB ADSR2 Release
 
-  tix profile:    # formerly called 'a00'
+  tix profile:
     MRK tick clock : 60 Hz
-    MRK -> MUS lead: 3.000 s
+    MRK -> MUS lead: 180 ticks / 60 Hz = 3.000000 s
     Gate           : MRK +0x10 Key-Off + VAB ADSR2 Release
 
   Shared:
@@ -41,10 +39,10 @@ The known profiles are:
 
 Example:
   python rebuild_technic_beat.py \
-      --mus e15.mus --mrk e15_.mrk --vh e15.vh --vb e15.vb \
+      --mus e15.mus --mrk e15_.mrk --vh e15.vh --vb e15.vb --profile beat \
       --out e15.wav --instruments e15_instruments.wav
 
-The defaults can be overridden for songs/versions that differ.
+Specify --profile beat or --profile tix to match the song's in-game profile flag.
 """
 
 from __future__ import annotations
@@ -770,82 +768,6 @@ def write_wav(path: Path, arr: np.ndarray, rate=RATE_MUS):
 
 
 
-def choose_profile_auto(
-    *,
-    num_programs,
-    num_tones,
-    num_vags,
-    bpm,
-    events,
-    end_tick,
-    mus_duration,
-):
-    """
-    Infer the renderer profile from structural properties.
-
-    The two confirmed timing profiles are:
-
-    tix (formerly a00):
-      - small VAB bank (a00: 2 programs / 26 tones / 26 VAGs)
-      - MRK timing behaves as exactly 60 Hz
-      - +3.000 s lead
-      - v5 uses MRK +0x10 Key-Off + VAB ADSR2 Release
-
-    namco (formerly e15):
-      - larger/more general song banks
-      - MRK timing follows NTSC 60000/1001 Hz
-      - +2.9701 s lead
-      - v5 uses MRK +0x10 Key-Off + VAB ADSR2 Release
-
-    The detector intentionally favors the namco profile unless there is strong
-    evidence for the small-bank tix behaviour.
-
-    Naming note:
-      - namco = former 'e15' timing profile
-      - tix   = former 'a00' timing profile
-    """
-    reasons = []
-
-    # Strongest structural discriminator observed so far.
-    small_bank = (
-        num_programs <= 2
-        and num_tones <= 32
-        and num_vags <= 32
-    )
-
-    if small_bank:
-        reasons.append(
-            f"small VAB bank ({num_programs} programs / "
-            f"{num_tones} tones / {num_vags} VAGs)"
-        )
-
-    # Secondary consistency check: does the explicit MRK end marker land near
-    # the MUS end under the Days Dreamer timing model?
-    a00_end_error = None
-    e15_end_error = None
-    if end_tick is not None and mus_duration > 0:
-        a00_end = end_tick / 60.0 + 3.0
-        e15_end = end_tick / (60000.0 / 1001.0) + 2.9701
-        a00_end_error = abs(mus_duration - a00_end)
-        e15_end_error = abs(mus_duration - e15_end)
-
-        # This is only supporting evidence: some MUS files contain padded
-        # silence after the musical ending (e15 is such a case).
-        if a00_end_error <= 1.5:
-            reasons.append(
-                f"MRK end matches MUS end under tix timing (60 Hz/+3 s) "
-                f"(error {a00_end_error:.3f} s)"
-            )
-
-    # Small-bank evidence is intentionally required. This avoids classifying
-    # padded MUS files incorrectly from duration alone.
-    if small_bank:
-        return "tix", reasons, a00_end_error, e15_end_error
-
-    reasons.append("no strong tix small-bank signature")
-    return "namco", reasons, a00_end_error, e15_end_error
-
-
 def main():
     ap = argparse.ArgumentParser(
         description="Reconstruct Technic Beat music from MUS + MRK + VH/VB."
@@ -859,7 +781,7 @@ def main():
     ap.add_argument("--instruments", type=Path)
     ap.add_argument("--events-csv", type=Path)
 
-    # Arcade automatic-play calibrated defaults.
+    # General overrides; profile timing below takes precedence.
     ap.add_argument("--tick-hz", type=float, default=60000.0 / 1001.0)
     ap.add_argument("--lead-sec", type=float, default=2.9701)
     ap.add_argument("--note-offset", type=int, default=-1)
@@ -867,12 +789,12 @@ def main():
     ap.add_argument("--instrument-gain", type=float, default=0.837)
     ap.add_argument(
         "--profile",
-        choices=("auto", "namco", "tix"),
-        default="auto",
+        choices=("beat", "tix"),
+        required=True,
         help=(
-            "Timing/voice preset. auto: infer from VAB/MRK structure. "
-            "namco (formerly e15): arcade-calibrated 59.94 Hz timing. "
-            "tix (formerly a00): 60 Hz + 3.000 s timing. v6 keeps the v5 ADSR Key-Off path for both."
+            "Timing/voice preset; select the profile matching the game song flag. "
+            "beat: 59.94 Hz timing with 178-tick game-derived lead. "
+            "tix: 60 Hz timing with 180-tick game-derived lead. v6 keeps the v5 ADSR Key-Off path for both."
         ),
     )
     ap.add_argument(
@@ -955,34 +877,32 @@ def main():
     decoded = [decode_psx_adpcm(c)[0] for c in chunks]
     bg = mus_to_stereo(mus)
 
-    # Parse once with a neutral 60 Hz clock to inspect structure/end marker.
-    bpm_probe, boundaries_probe, events_probe, end_tick_probe = parse_mrk(mrk, 60.0)
-
+    # The game chooses the timing family from a per-song flag.
+    # Asset heuristics cannot determine that flag reliably, so --profile is
+    # intentionally explicit.
     selected_profile = args.profile
-    profile_reasons = []
-    a00_end_error = e15_end_error = None
 
-    if selected_profile == "auto":
-        selected_profile, profile_reasons, a00_end_error, e15_end_error = choose_profile_auto(
-            num_programs=npg,
-            num_tones=nt,
-            num_vags=nv,
-            bpm=bpm_probe,
-            events=events_probe,
-            end_tick=end_tick_probe,
-            mus_duration=len(bg) / RATE_MUS,
-        )
+    # Apply profile defaults.
+    #
+    # Game-derived timing:
+    #   tix  : effective lead = 180 MRK ticks
+    #   beat : effective lead = 178 MRK ticks
+    #
+    # Convert the game's tick-domain lead to seconds using each profile's
+    # MRK clock instead of storing empirical second values directly.
+    #
+    # --gate remains an explicit override for experiments.
+    TIX_LEAD_TICKS = 180
+    BEAT_LEAD_TICKS = 178
 
-    # Apply profile defaults. The profile deliberately controls the timing
-    # constants; --gate remains an explicit override for experiments.
     if selected_profile == "tix":
         args.tick_hz = 60.0
-        args.lead_sec = 3.0
+        args.lead_sec = TIX_LEAD_TICKS / args.tick_hz
         if args.gate is None:
             args.gate = "adsr"
-    elif selected_profile == "namco":
+    elif selected_profile == "beat":
         args.tick_hz = 60000.0 / 1001.0
-        args.lead_sec = 2.9701
+        args.lead_sec = BEAT_LEAD_TICKS / args.tick_hz
         if args.gate is None:
             args.gate = "adsr"
     else:
@@ -1052,9 +972,9 @@ def main():
     if args.profile == "auto":
         for reason in profile_reasons:
             print(f"Auto-profile reason     : {reason}")
-        if a00_end_error is not None:
-            print(f"End error (a00 model)    : {a00_end_error:.6f} s")
-            print(f"End error (e15 model)   : {e15_end_error:.6f} s")
+        if tix_end_error is not None:
+            print(f"End error (Technictix model)    : {tix_end_error:.6f} s")
+            print(f"End error (TechnicBeat model)   : {beat_end_error:.6f} s")
     print(f"Programs / tones / VAGs : {npg} / {nt} / {nv}")
     print(f"MRK BPM                : {bpm}")
     print(f"MRK events             : {len(events)}")
@@ -1064,7 +984,14 @@ def main():
         print(f"MRK end time           : {end_tick / args.tick_hz:.6f} s (+ lead = {end_tick / args.tick_hz + args.lead_sec:.6f} s)")
     print(f"MUS duration           : {len(bg) / RATE_MUS:.6f} s")
     print(f"Tick clock             : {args.tick_hz:.9f} Hz")
-    print(f"MRK -> MUS lead        : {args.lead_sec:.6f} s")
+    if selected_profile == "tix":
+        lead_ticks = TIX_LEAD_TICKS
+    else:
+        lead_ticks = BEAT_LEAD_TICKS
+    print(
+        f"MRK -> MUS lead        : {args.lead_sec:.6f} s "
+        f"({lead_ticks} ticks @ {args.tick_hz:.9f} Hz)"
+    )
     print(f"Note offset            : {args.note_offset:+d}")
     print(f"Pitch correction       : {args.pitch_cents:+.3f} cents")
     print(f"Instrument gain        : {args.instrument_gain:.6f}")

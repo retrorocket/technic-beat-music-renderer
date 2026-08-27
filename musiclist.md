@@ -1,31 +1,13 @@
-# PS2 テクニクビートの曲番号表
+# PS2 テクニクビートの楽曲の管理情報
 
-テクニクティクス～AC版でも同様の値が使用されている。AC版は `0x78`（多分） がエンディングになる。
+テクニクティクス～AC版でも同様の値が使用されている。AC版はおそらく `0x78`がエンディングに該当する。
 
 - PS2の日本版テクニクビートであれば `00285680` アドレスの値を呼び出したい曲の値に変更することで、フリーモード一番先頭の曲から任意の曲を呼び出せる。
   - デフォルト値は Days Dreamer `0x00`
 - AC版テクニクビートであれば、ノーマルモード 1st Priodの一番先頭の曲 `0036B2F0` を呼び出したい曲の値に変更することで、同様に任意の曲を呼び出せる。
   - デフォルト値は Days Dreamer `0x00`
-- `tr[a-f]`内のファイルはパズル用の曲データと譜面なので使用しない。
 
-## それぞれのファイルの格納場所
-
-- `.mus` -> `zmus`
-- `.vh`, `.vb` -> `snd`
-- `.mrk` -> `seq`
-
-## 出力したWAV結果と実機の演奏結果を比較したいとき
-
-アーケード版ノーマルモードの楽曲選択画面で、下記の `メモリアドレス` を -> `値` に書き換える。
-
-```text
-001CA7F8 -> 1000000A // アンダースコア付き_mrk（譜面作成前の元データとして用意されたと思われるファイル）, _seq（空のシーケンス）を読み込む
-001CACA0 -> 10000005 // マーカーを自動演奏する
-```
-
-## 楽曲の管理情報
-
-Hard ver.は `.mus` と `.vh`, `.vb` を通常曲と共有している。`.seq` , `.mrk` にHard ver.用のファイルが用意してある。
+Hard Ver.は `.mus` と `.vh`, `.vb` を通常曲と共有している。`.seq` , `.mrk` にHard Ver.用のファイルが用意してある。
 
 | メモリ上の曲管理用の値 (`0x`) | ファイルのパス | 曲名                        |
 | ----------------------------- | -------------- | --------------------------- |
@@ -36,13 +18,13 @@ Hard ver.は `.mus` と `.vh`, `.vb` を通常曲と共有している。`.seq` 
 | 04                            | `sta/a04`      | Earth Will                  |
 | 05                            | `sta/a05`      | Clip Click                  |
 | 06                            | `sta/a06`      | Visited Alone               |
-| 07                            | `sta/a07`      | E.H.M.Y. Hard ver.          |
+| 07                            | `sta/a07`      | E.H.M.Y. Hard Ver.          |
 | 08                            | `sta/a08`      | Mao's Travel                |
 | 09                            | `sta/a09`      | TGM in the Bottle           |
-| 0A                            | `sta/a10`      | Clip Click Hard ver.        |
-| 0B                            | `sta/a11`      | Days Dreamer Hard ver.      |
+| 0A                            | `sta/a10`      | Clip Click Hard Ver.        |
+| 0B                            | `sta/a11`      | Days Dreamer Hard Ver.      |
 | 0C                            | `sta/a12`      | E.H.M.Y.                    |
-| 0D                            | `sta/a13`      | TGM in the Bottle Hard ver. |
+| 0D                            | `sta/a13`      | TGM in the Bottle Hard Ver. |
 | 14                            | `stb/b00`      | Rambler                     |
 | 15                            | `stb/b01`      | Inside One                  |
 | 16                            | `stb/b02`      | Bossa Antique               |
@@ -54,7 +36,7 @@ Hard ver.は `.mus` と `.vh`, `.vb` を通常曲と共有している。`.seq` 
 | 1C                            | `stb/b08`      | Broken Shackles             |
 | 1D                            | `stb/b09`      | Spiral Life                 |
 | 1E                            | `stb/b10`      | Happy Happy                 |
-| 1F                            | `stb/b11`      | Rambler Hard ver.           |
+| 1F                            | `stb/b11`      | Rambler Hard Ver.           |
 | 28                            | `stc/c00`      | Dizzy Dog                   |
 | 29                            | `stc/c01`      | Hard Head                   |
 | 2A                            | `stc/c02`      | Hectic                      |
@@ -66,8 +48,8 @@ Hard ver.は `.mus` と `.vh`, `.vb` を通常曲と共有している。`.seq` 
 | 30                            | `stc/c08`      | Dynamite Egoist             |
 | 31                            | `stc/c09`      | TE-20                       |
 | 32                            | `stc/c10`      | Arabesque                   |
-| 33                            | `stc/c11`      | Roteen da Moon Hard ver.    |
-| 34                            | `stc/c12`      | Night Life Hard ver.        |
+| 33                            | `stc/c11`      | Roteen da Moon Hard Ver.    |
+| 34                            | `stc/c12`      | Night Life Hard Ver.        |
 | 55                            | `ste/e00`      | Xevious                     |
 | 56                            | `ste/e01`      | Dig Dug                     |
 | 57                            | `ste/e02`      | Mappy                       |
@@ -101,11 +83,11 @@ Hard ver.は `.mus` と `.vh`, `.vb` を通常曲と共有している。`.seq` 
 | 73                            | `ste/e30`      | Soul Edge                   |
 | 74                            | `ste/e31`      | The Tower of Druaga         |
 | 75                            | `ste/e32`      | Cosmo Gang the Video        |
-| 76                            | `ste/e33`      | Sky Kid Hard ver.           |
-| 77                            | `ste/e34`      | PacMania Hard ver.          |
-| 78                            | `ste/e35`      | Burning Force Hard ver.     |
-| 79                            | `ste/e36`      | Thunder Ceptor Hard ver.    |
-| 7D                            | -              | Arcade mode ENDING          |
+| 76                            | `ste/e33`      | Sky Kid Hard Ver.           |
+| 77                            | `ste/e34`      | PacMania Hard Ver.          |
+| 78                            | `ste/e35`      | Burning Force Hard Ver.     |
+| 79                            | `ste/e36`      | Thunder Ceptor Hard Ver.    |
+| 7D                            | -              | ENDING (Arcade mode )       |
 | 7E                            | `stf/f01`      | brisa do mar                |
 | 7F                            | `stf/f02`      | Spider Control 16th         |
 | 80                            | `stf/f03`      | The Absolute                |
@@ -116,6 +98,23 @@ Hard ver.は `.mus` と `.vh`, `.vb` を通常曲と共有している。`.seq` 
 | 85                            | `stf/f08`      | Sakura Mankai               |
 | 86                            | `stf/f09`      | Ancient Zone                |
 | 87                            | `stf/f10`      | L7-A2                       |
-| 88                            | `stf/f11`      | Stronger Hard ver.          |
+| 88                            | `stf/f11`      | Stronger Hard Ver.          |
 | 89                            | `stf/f12`      | LOVE MAHJONG                |
 | 8A                            | -              | Sudden Death Ending         |
+
+## それぞれのファイルの格納場所
+
+- `zmus/***/***.mus`
+- `snd/***/***.vh, .vb`
+- `seq/***/***_.mrk`
+
+`tr[a-f]`内のファイルはパズル用の曲データと譜面なので使用しない。
+
+## 出力したWAV結果と実機の演奏結果を比較したいとき
+
+アーケード版ノーマルモードの楽曲選択画面で、下記の `メモリアドレス` を -> `値` に書き換える。
+
+```text
+001CA7F8 -> 1000000A // アンダースコア付き_mrk（譜面作成前の元データとして用意されたと思われるファイル）, _seq（空のシーケンス）を読み込む
+001CACA0 -> 10000005 // マーカーを自動演奏する
+```
