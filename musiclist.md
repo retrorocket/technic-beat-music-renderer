@@ -87,7 +87,7 @@ Hard Ver.は `.mus` と `.vh`, `.vb` を通常曲と共有している。`.seq` 
 | 77                            | `ste/e34`      | PacMania Hard Ver.          |
 | 78                            | `ste/e35`      | Burning Force Hard Ver.     |
 | 79                            | `ste/e36`      | Thunder Ceptor Hard Ver.    |
-| 7D                            | -              | ENDING (Arcade mode )       |
+| 7D                            | -              | ENDING (Arcade mode)        |
 | 7E                            | `stf/f01`      | brisa do mar                |
 | 7F                            | `stf/f02`      | Spider Control 16th         |
 | 80                            | `stf/f03`      | The Absolute                |
