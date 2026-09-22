@@ -1,4 +1,17 @@
 #!/usr/bin/env python3
+# Copyright (C) 2026 りゅー
+# SPDX-License-Identifier: GPL-3.0-or-later
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU General Public License in this repository's LICENSE file for details.
+
 """
 Technictix / Technic Beat MUS + MRK + VH/VB -> WAV renderer
 
@@ -370,6 +383,12 @@ def apply_keyoff_release(y: np.ndarray, keyoff_samples: int, adsr2: int):
 # ---------------------------------------------------------------------------
 # Experimental SPU2 HALL reverb (v6)
 # ---------------------------------------------------------------------------
+#
+# This SPU2 reverb implementation contains/adapts material from PCSX2,
+# including the 39-tap FIR coefficients. PCSX2 is licensed under
+# GPL-3.0-or-later. Copyright in that material remains with the respective
+# PCSX2 contributors.
+# PCSX2 repository: https://github.com/PCSX2/pcsx2
 #
 # Reverse-engineered from the game's IOP/libsd state:
 #

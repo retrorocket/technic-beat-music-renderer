@@ -1,9 +1,22 @@
 # Technictix / Technic Beat MUS + MRK + VH/VB → WAV Renderer
 
 - Technictix / Technic Beat の楽曲データから、伴奏（MUS）と演奏音（MRK + VAB）を合成して楽曲をWAVへ復元する実験的なスクリプトです。
+  - **このリポジトリにゲーム由来のファイルは含まれていません。**
 - 実装にあたって、 <https://gist.github.com/Sakimotor/623c1fcd8470c208347300382b32cda3> を参考にしました。
 - **このスクリプトは個人の技術的な興味から作成されたものです。** 基本的にすべての曲はサウンドトラックに収録されているため、よっぽどの事情がない限りはサウンドトラックで十分のはずです。個人で楽しんだりゲームを研究する用途以外で使わないでください。
 - 実装は `GPT-5.6 Sol` に手伝ってもらいました。ありがとうございます。
+
+## License
+
+このプロジェクトは [GNU General Public License v3.0 or later (GPL-3.0-or-later)](./LICENSE) で提供されます。
+
+Copyright (C) 2026 りゅー。第三者由来の部分の著作権は、それぞれの権利者に帰属します。
+
+## Credits
+
+- [PCSX2](https://github.com/PCSX2/pcsx2) — SPU2 reverb の実装・参照元、および `ReverbResample.cpp` の39-tap FIR係数の出典です。PCSX2 は GPL-3.0-or-later で提供されており、由来する部分の著作権は各 PCSX2 contributor に帰属します。
+- [Sakimotor](https://gist.github.com/Sakimotor/623c1fcd8470c208347300382b32cda3) — Technic Beat MUSデータの並べ替え処理の実装・参照元です。元のコードについては、[Gist上のライセンス問い合わせへの回答](https://gist.github.com/Sakimotor/623c1fcd8470c208347300382b32cda3#gistcomment-6316149)でMITとして扱うことを了承されています。このプロジェクト全体のGPL表記は、Sakimotor氏の元のコードのライセンスを変更するものではありません。
+- [almendaz / HCS64 forum](https://hcs64.com/mboard/forum.php?showthread=60921) — MUS形式とデータ並べ替えアルゴリズムの元になった解析をHCS64 forumに投稿された方です。
 
 ---
 
