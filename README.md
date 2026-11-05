@@ -85,7 +85,7 @@ python3 technic_beat_music_renderer.py \
 | `--out FILE` | 出力WAV（必須） |
 | `--instruments FILE` | 楽器演奏のみのWAVを出力（音量の正規化はしません） |
 | `--events-csv FILE` | 譜面のイベント一覧をCSVで出力 |
-| `--reverb {on,off}` | リバーブ（既定: `on`） |
+| `--reverb {on,off}` | 譜面どおりリバーブをかけます（既定: `on`） |
 | `--reverb-trim VALUE` | リバーブ量の倍率（既定: 1.0） |
 | `--reverb-wet FILE` / `--reverb-send FILE` | リバーブ成分 / リバーブへの入力を別WAVで出力 |
 | `--phrases {auto,on,off}` | ゲームプレイ用譜面のフレーズ展開（既定: `auto`） |
