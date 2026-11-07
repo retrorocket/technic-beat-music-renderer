@@ -76,13 +76,13 @@ python3 technic_beat_music_renderer.py \
 | 値 | 対象 |
 | --- | --- |
 | `tix` | テクニクティクスの収録曲（テクニクビートの sta〜std を含む） |
-| `beat` | テクニクビートの新曲（ste / stf） |
+| `beat` | テクニクビートの追加曲（ste / stf） |
 
 ### 主なオプション
 
 | オプション | 内容 |
 | --- | --- |
-| `--out FILE` | 出力WAV（必須） |
+| `--out FILE` | WAVの出力先（必須） |
 | `--instruments FILE` | 楽器演奏のみのWAVを出力（音量の正規化はしません） |
 | `--events-csv FILE` | 譜面のイベント一覧をCSVで出力 |
 | `--reverb {on,off}` | 譜面どおりリバーブをかけます（既定: `on`） |
