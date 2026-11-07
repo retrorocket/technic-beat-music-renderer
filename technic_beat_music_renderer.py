@@ -108,6 +108,7 @@ def parse_vh(vh: bytes):
 
             tones.append({
                 "global_tone": len(tones),
+                "slot": program * 16 + tone_no,
                 "program": program,
                 "tone": tone_no,
                 "volume": r[2],
@@ -764,7 +765,7 @@ def render_instruments(
 ):
     mix = np.zeros((out_len, 2), dtype=np.float32)
     reverb_send_mix = np.zeros((out_len, 2), dtype=np.float32)
-    tone_map = {t["global_tone"]: t for t in tones}
+    tone_map = {t["slot"]: t for t in tones}
     cache = {}
 
     skipped = 0
