@@ -232,7 +232,11 @@ def expand_gameplay_phrases(events, tick_hz: float, hit_velocity: bool = False):
             groups.setdefault((e["chart_tick"], e["ball"]), []).append(e)
 
     for members in groups.values():
-        members.sort(key=lambda e: (e["step"], e["record"]))
+        steps = [e["step"] for e in members]
+        if len(set(steps)) < len(steps) and all(e["group"] for e in members):
+            members.sort(key=lambda e: (e["member"], e["record"]))
+        else:
+            members.sort(key=lambda e: (e["step"], e["record"]))
         t = members[0]["chart_tick"]
         for m in members:
             m["tick"] = t
