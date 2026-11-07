@@ -38,7 +38,7 @@ Copyright (C) 2026 りゅー。第三者由来の部分の著作権は、それ�
 | `--vh` | 音色ヘッダ（`.vh`） |
 | `--vb` | 音色データ（`.vb`） |
 
-`.mrk` は2種類存在します。どちらの譜面でもwavに変換できます。
+`.mrk` は2種類存在します。どちらの譜面でもWAVに変換できます。
 
 - `_` なしの `.mrk` はゲームで実際にプレイヤーが演奏する譜面です。
 - `_` 付きの `.mrk` はSOUND PLAYERで使用される自動演奏用の譜面です。一部の楽曲はSOUND PLAYERとゲーム中の演奏で鳴り方が異なるものがあります。
@@ -85,7 +85,7 @@ python3 technic_beat_music_renderer.py \
 | `--out FILE` | WAVの出力先（必須） |
 | `--instruments FILE` | 楽器演奏のみのWAVを出力（音量の正規化はしません） |
 | `--events-csv FILE` | 譜面のイベント一覧をCSVで出力 |
-| `--reverb {on,off}` | 譜面どおりリバーブをかけます（既定: `on`） |
+| `--reverb {on,off}` | 譜面どおりリバーブをかける（既定: `on`） |
 | `--reverb-trim VALUE` | リバーブ量の倍率（既定: 1.0） |
 | `--reverb-wet FILE` / `--reverb-send FILE` | リバーブ成分 / リバーブへの入力を別WAVで出力 |
 | `--phrases {auto,on,off}` | ゲームプレイ用譜面のフレーズ展開（既定: `auto`） |
