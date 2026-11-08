@@ -89,7 +89,7 @@ US版は複数の曲で日本版から一部音が変更されているが、f03
 | 77                            | `ste/e34`      | PacMania Hard Ver.          |
 | 78                            | `ste/e35`      | Burning Force Hard Ver.     |
 | 79                            | `ste/e36`      | Thunder Ceptor Hard Ver.    |
-| 7D                            | -              | ENDING (Arcade mode)        |
+| 7D                            | `end/ending`   | ENDING (Arcade mode)        |
 | 7E                            | `stf/f01`      | brisa do mar                |
 | 7F                            | `stf/f02`      | Spider Control 16th         |
 | 80                            | `stf/f03`      | The Absolute                |
@@ -102,7 +102,7 @@ US版は複数の曲で日本版から一部音が変更されているが、f03
 | 87                            | `stf/f10`      | L7-A2                       |
 | 88                            | `stf/f11`      | Stronger Hard Ver.          |
 | 89                            | `stf/f12`      | LOVE MAHJONG                |
-| 8A                            | -              | Sudden Death Ending         |
+| 8A                            | `end/ed2`      | Sudden Death Ending         |
 
 ## それぞれのファイルの格納場所
 
@@ -136,7 +136,7 @@ R5900はリトルエンディアンで動作する点に注意すること。
 0x001CACA0 -> 0x10000005
 ```
 
-#### PS2版の再生方法
+#### PS2版（日本版）の再生方法
 
 フリーモード選択後に値を以下に書き換える。曲名が黄・緑・LOVE​ MAHJONGを選択すると暗転してゲームが進まなくなる。
 
