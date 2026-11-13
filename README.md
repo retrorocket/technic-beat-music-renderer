@@ -61,10 +61,10 @@ PS2版の e05〜e14 と e19 の zmus は、アーケード版の zmus を1.001�
 
 ```bash
 python3 technic_beat_music_renderer.py \
-    --mus e15.mus \
-    --mrk e15.mrk \
-    --vh e15.vh \
-    --vb e15.vb \
+    --mus ./zmus/ste/e15.mus \
+    --mrk ./seq/ste/e15.mrk \
+    --vh ./snd/ste/e15.vh \
+    --vb ./snd/ste/e15.vb \
     --profile beat \
     --out e15.wav
 ```
