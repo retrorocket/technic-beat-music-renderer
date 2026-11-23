@@ -1,63 +1,69 @@
 # Technictix / Technic Beat MUS + MRK + VH/VB → WAV Renderer
 
-- Technictix / Technic Beat の楽曲データから、伴奏（MUS）と演奏音（MRK + VAB）を合成して楽曲をWAVへ復元する実験的なスクリプトです。
-  - **このリポジトリにゲーム由来のファイルは含まれていません。**
-- 実装にあたって、 <https://gist.github.com/Sakimotor/623c1fcd8470c208347300382b32cda3> を参考にしました。
-- **このスクリプトは個人の技術的な興味から作成されたものです。** ゲーム由来のデータの利用については、各自で適用される著作権その他の権利を遵守してください。
-- 実装は `GPT-5.6 Sol` と `Opus 5.5` に手伝ってもらいました。ありがとうございます。
+[日本語](./README_ja.md)
+
+- An experimental script that reconstructs music from Technictix / Technic Beat game data into WAV files by mixing the backing track (MUS) with the instrument performance (MRK + VAB).
+  - This repository does not contain any files extracted from the games.
+- The implementation was developed with reference to [Sakimotor's Gist](https://gist.github.com/Sakimotor/623c1fcd8470c208347300382b32cda3).
+- This script was created out of personal technical interest. When using data derived from the games, you are responsible for complying with all applicable copyrights and other rights.
+- The implementation was developed with assistance from `GPT-5.6 Sol` and `Opus 5.5`. Thank you.
 
 ## License
 
-このプロジェクトは [GNU General Public License v3.0 or later (GPL-3.0-or-later)](./LICENSE) で提供されます。
+This project is licensed under the [GNU General Public License v3.0 or later (GPL-3.0-or-later)](LICENSE).
 
-Copyright (C) 2026 りゅー。第三者由来の部分の著作権は、それぞれの権利者に帰属します。
+Copyright (C) 2026 りゅー
+
+Copyright for portions derived from third-party works belongs to their respective copyright holders.
 
 ## Credits
 
-- [PCSX2](https://github.com/PCSX2/pcsx2) — SPU2 reverb の実装・参照元、および `ReverbResample.cpp` の39-tap FIR係数の出典です。PCSX2 は GPL-3.0-or-later で提供されており、由来する部分の著作権は各 PCSX2 contributor に帰属します。
-- [Sakimotor](https://gist.github.com/Sakimotor/623c1fcd8470c208347300382b32cda3) — Technic Beat MUSデータの並べ替え処理の実装・参照元です。元のコードについては、[Gist上のライセンス問い合わせへの回答](https://gist.github.com/Sakimotor/623c1fcd8470c208347300382b32cda3#gistcomment-6316149)でMITとして扱うことを了承されています。このプロジェクト全体のGPL表記は、Sakimotor氏の元のコードのライセンスを変更するものではありません。
-- [almendaz / HCS64 forum](https://hcs64.com/mboard/forum.php?showthread=60921) — MUS形式とデータ並べ替えアルゴリズムの元になった解析をHCS64 forumに投稿された方です。
+- [PCSX2](https://github.com/PCSX2/pcsx2) — Reference and implementation source for SPU2 reverb, as well as the source of the 39-tap FIR coefficients in `ReverbResample.cpp`. PCSX2 is licensed under GPL-3.0-or-later, and copyright for the derived portions belongs to the respective PCSX2 contributors.
+- [Sakimotor](https://gist.github.com/Sakimotor/623c1fcd8470c208347300382b32cda3) — Implementation/reference source for the Technic Beat MUS data rearrangement process. The original code has been approved for use under the MIT License in [the response to the licensing inquiry on the Gist](https://gist.github.com/Sakimotor/623c1fcd8470c208347300382b32cda3). The GPL license applied to this project as a whole does not alter the license of Sakimotor's original code.
+- [almendaz / HCS64 forum](https://hcs64.com/) — Author of the original analysis of the MUS format and data rearrangement algorithm posted on the HCS64 forum.
 
 ---
 
-## 使い方
+## Usage
 
-### 必要環境
+### Requirements
 
 - Python 3
-- NumPy（`pip3 install numpy`）
+- NumPy (`pip3 install numpy`)
 
-### 入力ファイル
+### Input Files
 
-1曲につき次の4ファイルを指定します。
+Four files are required for each track.
 
-| オプション | ファイル |
+| Option | File |
 | --- | --- |
-| `--mus` | 伴奏（`.mus`） |
-| `--mrk` | 譜面（`.mrk`） |
-| `--vh` | 音色ヘッダ（`.vh`） |
-| `--vb` | 音色データ（`.vb`） |
+| `--mus` | Backing track (`.mus`) |
+| `--mrk` | Note chart (`.mrk`) |
+| `--vh` | Instrument header (`.vh`) |
+| `--vb` | Instrument data (`.vb`) |
 
-`.mrk` は2種類存在します。どちらの譜面でもWAVに変換できます。
+There are two types of `.mrk` files. Either type can be converted to WAV.
 
-- `_` なしの `.mrk` はゲームで実際にプレイヤーが演奏する譜面です。
-- `_` 付きの `.mrk` はSOUND PLAYERで使用される自動演奏用の譜面です。一部の楽曲はSOUND PLAYERとゲーム中の演奏で鳴り方が異なるものがあります。
+- `.mrk` files without `_` are the charts actually performed by the player during gameplay.
+- `.mrk` files with `_` are autoplay charts used by the SOUND PLAYER. For some tracks, the SOUND PLAYER performance differs from the in-game performance.
 
-|対象|SOUND PLAYER用 `.mrk` の有無|
-|:----|:----|
-|テクニクティクス|全曲分有り|
-|AC版テクニクビート|全曲分有り|
-|PS2版テクニクビート|LOVE MAHJONGを除くPS2新規曲のみ|
+| Game | SOUND PLAYER `.mrk` availability |
+| --- | --- |
+| Technictix | Available for all tracks |
+| Technic Beat (Arcade) | Available for all tracks |
+| Technic Beat (PS2) | Available only for the new PS2 tracks, except LOVE MAHJONG |
 
-ファイル名と曲名の対応表は [muliclist.md](./musiclist.md) を参照してください。
+See [musiclist.md](musiclist.md) for the mapping between filenames and track titles.
 
-### 注意点
+### Notes
 
-PS2版の e05〜e14 と e19 の zmus は、アーケード版の zmus を1.001倍速くしたものが収録されています。
-譜面は両版で同じです。
-`ste` のタイマーは VBlank（約59.94 Hz）で進むため、tick N の音は N ÷ 59.94 秒で鳴ります。アーケード版の zmus はこの時刻に合っていますが、PS2版の11曲は N ÷ 60 秒に合う長さになっているため、曲が進むにつれて譜面の音が伴奏より約0.1%ずつ遅れていきます（e05 では終盤で約50msずれます）。
+For PS2 tracks e05–e14 and e19, the included `zmus` files are versions of the arcade `zmus` played 1.001× faster. The note charts are identical between the two versions.
 
-### 実行例
+The `ste` timer advances on VBlank (approximately 59.94 Hz), so the sound at tick N is played at N ÷ 59.94 seconds. The arcade `zmus` files are synchronized to this timing, whereas the PS2 versions of these 11 tracks have durations corresponding to N ÷ 60 seconds.
+
+As a result, as the track progresses, the chart audio gradually falls behind the backing track by approximately 0.1%. For example, the offset reaches approximately 50 ms near the end of e05.
+
+### Example
 
 ```bash
 python3 technic_beat_music_renderer.py \
@@ -69,28 +75,32 @@ python3 technic_beat_music_renderer.py \
     --out e15.wav
 ```
 
-楽器演奏のみのWAVも同時に出力する場合は、`--instruments e15_instruments.wav` を追加します。
+To also output a WAV containing only the instrument performance, add:
 
-### `--profile`（必須）
+```text
+--instruments e15_instruments.wav
+```
 
-| 値 | 対象 |
+### `--profile` (Required)
+
+| Value | Target |
 | --- | --- |
-| `tix` | テクニクティクスの収録曲（テクニクビートの sta〜std を含む） |
-| `beat` | テクニクビートの追加曲（ste / stf） |
+| `tix` | Tracks from Technictix (including sta–std tracks in Technic Beat) |
+| `beat` | Additional tracks from Technic Beat (ste / stf) |
 
-### 主なオプション
+### Main Options
 
-| オプション | 内容 |
+| Option | Description |
 | --- | --- |
-| `--out FILE` | WAVの出力先（必須） |
-| `--instruments FILE` | 楽器演奏のみのWAVを出力（音量の正規化はしません） |
-| `--events-csv FILE` | 譜面のイベント一覧をCSVで出力 |
-| `--reverb {on,off}` | 譜面どおりリバーブをかける（既定: `on`） |
-| `--reverb-trim VALUE` | リバーブ量の倍率（既定: 1.0） |
-| `--reverb-wet FILE` / `--reverb-send FILE` | リバーブ成分 / リバーブへの入力を別WAVで出力 |
-| `--phrases {auto,on,off}` | ゲームプレイ用譜面のフレーズ展開（既定: `auto`） |
-| `--hit-velocity` | ゲームプレイ用譜面で、ラウンドウェーブで反応させたマーカーを反応時の音量で鳴らす |
-| `--no-normalize` | 最終ミックスの音量を下げない |
-| `--peak VALUE` | 正規化するときのピーク値（既定: 0.995） |
+| `--out FILE` | WAV output path (required) |
+| `--instruments FILE` | Output an instrument-only WAV (volume is not normalized) |
+| `--events-csv FILE` | Export a list of chart events as CSV |
+| `--reverb {on,off}` | Apply reverb according to the chart data (default: `on`) |
+| `--reverb-trim VALUE` | Reverb level multiplier (default: 1.0) |
+| `--reverb-wet FILE` / `--reverb-send FILE` | Output the reverb component / reverb input as separate WAV files |
+| `--phrases {auto,on,off}` | Phrase expansion for gameplay charts (default: `auto`) |
+| `--hit-velocity` | For gameplay charts, play markers triggered by the round wave at the velocity used when they are triggered |
+| `--no-normalize` | Do not reduce the volume of the final mix |
+| `--peak VALUE` | Peak level used for normalization (default: 0.995) |
 
-その他のオプションは `--help` で確認できます。
+Run `--help` to see the remaining options.

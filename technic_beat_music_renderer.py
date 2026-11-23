@@ -15,8 +15,8 @@
 """Technictix / Technic Beat MUS + MRK + VH/VB -> WAV renderer.
 
 Usage:
-  python3 technic_beat_music_renderer.py --mus e15.mus --mrk e15.mrk \
-      --vh e15.vh --vb e15.vb --profile beat --out e15.wav \
+  python3 technic_beat_music_renderer.py --mus ./zmus/ste/e15.mus --mrk ./seq/ste/e15.mrk \
+      --vh ./snd/ste/e15.vh --vb ./snd/ste/e15.vb --profile beat --out e15.wav \
       [--instruments e15_inst.wav]
 
 Run with --help for all options.
